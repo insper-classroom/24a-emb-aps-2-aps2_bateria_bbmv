@@ -36,21 +36,22 @@ try:
             data = ser.read(1)
             if data == b'\x00':
                 # gira
-            elif data == b'\x01':
+                break
+            elif  data == b'\x01':
                 # gira
-
+                break
             #checa se é o S de space
             elif data == b'\x53':
                 # é o space
-
+                break
             # checo se o U de up
             elif data == b'\x75':
                 #é o up
-
+                break
             elif data == b'\x64':
                 #é o down
-
-            if data == b'\xff':
+                break
+            elif data == b'\xff':
                 break
 
 
