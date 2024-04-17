@@ -224,6 +224,9 @@ void y_task(void *p) {
     }
 }
 
+const uint BTN_SPACE = 16;
+
+QueueHandle_t xQueueBTN;
 
 void hc06_task(void *p) {
     uart_init(HC06_UART_ID, HC06_BAUD_RATE);
@@ -235,6 +238,28 @@ void hc06_task(void *p) {
         uart_puts(HC06_UART_ID, "OLAAA ");
         vTaskDelay(pdMS_TO_TICKS(100));
     }
+}
+
+
+
+// BTN CALLBACK
+void btn_callback(uint gpio, uint32_t events) {
+    if (gpio == BTN_SPACE) {
+        if (events == 0x8) {
+            printf("Button SPACE pressed (rising edge)\n");
+            xQueueSendFromISR(xQueueBTN, &BTN_1_OLED, 0);
+        } else if (events == 0x4) {
+            printf("Button SPACE released (falling edge)\n");
+        }
+    }
+}
+
+void btn_init(void){
+
+    gpio_init(BTN_SPACE);
+    gpio_set_dir(BTN_SPACE, GPIO_IN);
+    gpio_pull_up(BTN_SPACE);
+    gpio_set_irq_enabled_with_callback(BTN_SPACE, GPIO_IRQ_EDGE_RISE_FALL, true, &btn_callback);
 }
 
 int main() {
