@@ -10,6 +10,9 @@ device = uinput.Device([
     uinput.REL_X,
     uinput.REL_Y,
     uinput.KEY_SPACE,
+    uinput.KEY_ENTER,
+    uinput.KEY_UP,
+    uinput.KEY_DOWN,
 ])
 
 
@@ -21,11 +24,17 @@ def parse_data(data):
     return axis, value
 
 
-def move_mouse(axis, value):
-    if axis == 0:    # X-axis
-        device.emit(uinput.REL_X, value)
-    elif axis == 1:  # Y-axis
-        device.emit(uinput.REL_Y, value)
+# def move_mouse(axis, value):
+#     if axis == 0:    # X-axis
+#         device.emit(uinput.REL_X, value)
+#     elif axis == 1:  # Y-axis
+#         if value > 0:
+#             device.emit(uinput.KEY_UP, 1)
+#         elif value < 0:
+#             device.emit(uinput.KEY_DOWN, 1)
+#         else: # caso a tecla n tenha sido apertada 
+#             device.emit(uinput.KEY_UP, 0)
+#             device.emit(uinput.KEY_DOWN, 0)
 
 
 try:
@@ -34,31 +43,23 @@ try:
         print('Waiting for sync package...')
         while True:
             data = ser.read(1)
-            if data == b'\x00':
-                # gira
-                break
-            elif  data == b'\x01':
-                # gira
-                break
-            #checa se é o S de space
-            elif data == b'\x53':
-                # é o space
-                break
-            # checo se o U de up
-            elif data == b'\x75':
-                #é o up
-                break
-            elif data == b'\x64':
-                #é o down
-                break
-            elif data == b'\xff':
-                break
-
+            if data == b'\xff':
+                break                
 
         # Read 4 bytes from UART
         data = ser.read(3)
         axis, value = parse_data(data)
-        move_mouse(axis, value)
+
+        if axis == 103: ## UP
+            # move_mouse(axis, value)
+            device.emit(uinput.KEY_UP, value)
+        elif axis == 108: ## DOWN
+            device.emit(uinput.KEY_DOWN, value)
+        elif axis == 28: ## ENTER
+            device.emit(uinput.KEY_ENTER, value)
+        elif axis == 57: ## PODER
+            device.emit(uinput.KEY_SPACE, value) 
+
 
 except KeyboardInterrupt:
     print("Program terminated by user")
