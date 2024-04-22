@@ -52,9 +52,9 @@ try:
 
         if axis == 103: ## UP
             # move_mouse(axis, value)
-            device.emit(uinput.KEY_UP, value)
-        elif axis == 108: ## DOWN
             device.emit(uinput.KEY_DOWN, value)
+        elif axis == 108: ## DOWN
+            device.emit(uinput.KEY_UP, value)
         elif axis == 28: ## ENTER
             device.emit(uinput.KEY_ENTER, value)
         elif axis == 57: ## PODER

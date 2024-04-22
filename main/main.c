@@ -231,7 +231,7 @@ void y_task(void *p) {
         if (y > 0) {
            struct adc y_data = {103,1};
             xQueueSend(xQueueAdc, &y_data, portMAX_DELAY);
-        } else if (y > 0){
+        } else if (y < 0){
             struct adc y_data2 = {108,1};
             xQueueSend(xQueueAdc, &y_data2, portMAX_DELAY);
         } else {
@@ -294,8 +294,8 @@ void btn_init(void){
     gpio_pull_up(BTN_PODER);
     gpio_set_irq_enabled(BTN_PODER, GPIO_IRQ_EDGE_FALL | GPIO_IRQ_EDGE_RISE, true);
 }
-
-int main() {
+                  
+int main() {           
     stdio_init_all();
     btn_init(); // inicializa os botões
 
