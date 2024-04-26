@@ -1,4 +1,46 @@
-# HC06 examplo
+# ReadMe - Aps 2 Embarcados 24a
+# Controle Mario Kard (Online PC Game)
+Por: Beatriz Borges e Maria Vitória Sartori
+
+Link do Jogo
+-----
+https://mkpc.malahieude.net/ 
+O controle só funciona rodando no sistema operacional Linux
+
+Vídeo Demonstração
+-----
+link do vídeo ou o próprio vídeo
+
+Como Usar o Controle *"BiboBowser & BeckouKoopaKlaw HotWiu"*
+-----
+
+<img src='./imgs/IMG_7831.jpg'>
+
+Os comandos para jogar o jogo adequadamente e os seus respectivos botões no controle são:
+
+
+| Comando | Botão no Controle | Uso no Jogo |
+| ------------- | ------------- |------------- |
+| Key Up | Joystick up  | Acelerar |
+| Key Down  | Joystick down  | Ré  |
+| Key Left  | Girar controle para Esquerda | Esquerda |
+| Key Right  | Girar controle para Direita| Direita|
+| Space | Botão Superior da Direita | Jogar poder do carro |
+| Enter  | Botão  Inferior da Direita  | Selecionar fase, personagens, etc|
+
+Diagrama de Blocos Explicativo do Firmware
+----- 
+<img src='./imgs/Cópia de Cópia de 99677AC0-AB35-43EC-A9D2-F8D804FE8431.jpg'>
+
+**Requisitos Desenvolvidos**
+- (meio conceito) Utiliza ADC e IMU juntos no jogo
+- (meio conceito) O jogo deve ser "jogável" com o controle (sem latência, e avalido pela equipe)
+- (meio conceito) Envia com a entrega vídeo TOP/ stonks do controle nível quickstarter
+- (meio conceito) Código separado em .c e .h
+- (meio conceito) Utiliza algum componente não visto em sala de aula - vibrador
+- (meio conceito) Hardware integrado no controle (bateria e tudo mais) 
+
+# HC06 exemplo
 
 Conectar HC06 no 5V e gnd, pino TX no `GP5` e pino RX no `GP4`. Também é necessário conectar o pino `STATE` do bluetooth no pino `GP3`.
 
