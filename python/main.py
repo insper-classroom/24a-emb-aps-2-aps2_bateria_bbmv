@@ -1,12 +1,13 @@
 import serial
 import uinput
 
-ser = serial.Serial('/dev/ttyACM0', 115200)
+# ser = serial.Serial('/dev/ttyACM0', 115200)
+ser = serial.Serial('/dev/rfcomm0', 9600)
 
 # Create new mouse device
 device = uinput.Device([
-    uinput.BTN_LEFT,
-    uinput.BTN_RIGHT,
+    uinput.KEY_LEFT,
+    uinput.KEY_RIGHT,
     uinput.REL_X,
     uinput.REL_Y,
     uinput.KEY_SPACE,
@@ -59,6 +60,10 @@ try:
             device.emit(uinput.KEY_ENTER, value)
         elif axis == 57: ## PODER
             device.emit(uinput.KEY_SPACE, value) 
+        elif axis == 105:
+            device.emit(uinput.KEY_LEFT, value)
+        elif axis == 106:
+            device.emit(uinput.KEY_RIGHT, value)
 
 
 except KeyboardInterrupt:
