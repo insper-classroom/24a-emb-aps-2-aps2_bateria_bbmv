@@ -28,8 +28,11 @@ const int I2C_SDA_GPIO = 4;
 const int I2C_SCL_GPIO = 5;
 const int ADC_X = 27;
 const int ADC_Y = 26;
-const uint BTN_PODER = 11;
-const uint BTN_ENTER = 12;
+const uint BTN_PODER = 21;
+const uint BTN_ENTER = 22;
+const int LED_PIN = 16;
+
+volatile bool on = false; 
 
 // Implementação do filtro de média móvel
 #define WINDOW_SIZE 5
@@ -93,10 +96,11 @@ void write_package(adc_t data) {
     int msb = val >> 8;
     int lsb = val & 0xFF ;
 
-    uart_putc_raw(uart0, data.axis);
-    uart_putc_raw(uart0, lsb);
-    uart_putc_raw(uart0, msb);
-    uart_putc_raw(uart0, -1);
+    // For bluetooth use: uart1
+    uart_putc_raw(uart1, data.axis);
+    uart_putc_raw(uart1, lsb);
+    uart_putc_raw(uart1, msb);
+    uart_putc_raw(uart1, -1);
 }
 
 void uart_task(void *p) {
@@ -184,27 +188,24 @@ void mpu6050_task(void *p) {
 
         const FusionEuler euler = FusionQuaternionToEuler(FusionAhrsGetQuaternion(&ahrs));
 
-        // enviar para fila a struct do x
+        //enviar para fila a struct do y
+    
+        int valor = (int)euler.angle.pitch; 
+        // printf("Pitch %0.1f\n",euler.angle.pitch );
+        if (valor > 10){ //BTN DIREITA
+            struct adc y_data = {106, 1};
+            xQueueSend(xQueueAdc, &y_data, portMAX_DELAY);
+        } else if (valor < -10){ // esquerda
+            struct adc y_data2 = {105, 1};
+            xQueueSend(xQueueAdc, &y_data2, portMAX_DELAY);
+        } else {
+            struct adc y_data = {106, 0};
+            xQueueSend(xQueueAdc, &y_data, portMAX_DELAY);
+            struct adc y_data2 = {105,0};
+            xQueueSend(xQueueAdc, &y_data2, portMAX_DELAY); 
+        }
 
-        // struct adc x_data = {0, (int)euler.angle.roll};
-        // //printf("dado x")
-        // //xQueueSend(xQueueAdc, &x_data, portMAX_DELAY);
-
-        // // enviar para fila a struct do y
-        // struct adc y_data = {1, (int)euler.angle.pitch};
-        // //xQueueSend(xQueueAdc, &y_data, portMAX_DELAY);
-        // vTaskDelay(pdMS_TO_TICKS(10));
-        
-        // roll FAZER DESSE + ESCALA + MEDIA MOVEL
-
-
-        //printf("Roll %0.1f, Pitch %0.1f, Yaw %0.1f\n", euler.angle.roll, euler.angle.pitch, euler.angle.yaw);
-        //printf("Temp. = %f\n", (temp / 340.0) + 36.53);
-        // printf("Acc. X = %d, Y = %d, Z = %d\n", acceleration[0], acceleration[1], acceleration[2]);
-        // printf("Gyro. X = %d, Y = %d, Z = %d\n", gyro[0], gyro[1], gyro[2]);
-        //printf("Temp. = %f\n", (temp / 340.0) + 36.53);
-
-        vTaskDelay(pdMS_TO_TICKS(100));
+        vTaskDelay(pdMS_TO_TICKS(10));
     }
 }
 
@@ -250,12 +251,13 @@ void hc06_task(void *p) {
     uart_init(HC06_UART_ID, HC06_BAUD_RATE);
     gpio_set_function(HC06_TX_PIN, GPIO_FUNC_UART);
     gpio_set_function(HC06_RX_PIN, GPIO_FUNC_UART);
-    hc06_init("BRABAS", "0000");
+    //hc06_init("BRABAS", "0000");
 
     while (true) {
-        uart_puts(HC06_UART_ID, "OLAAA ");
+        //uart_puts(HC06_UART_ID, "OLAAA ");
         vTaskDelay(pdMS_TO_TICKS(100));
     }
+    
 }
 
 
@@ -278,7 +280,7 @@ void btn_callback(uint gpio, uint32_t events) {
             struct adc btn_data = {57, 0};
             xQueueSend(xQueueAdc, &btn_data, portMAX_DELAY);
         }
-    }
+    } 
 }
 
 
@@ -294,7 +296,9 @@ void btn_init(void){
     gpio_pull_up(BTN_PODER);
     gpio_set_irq_enabled(BTN_PODER, GPIO_IRQ_EDGE_FALL | GPIO_IRQ_EDGE_RISE, true);
 }
-                  
+
+
+
 int main() {           
     stdio_init_all();
     btn_init(); // inicializa os botões
@@ -305,13 +309,15 @@ int main() {
     // printf("Start bluetooth task\n");
     xTaskCreate(hc06_task, "UART_Task 1", 4096, NULL, 1, NULL);
 
-    //xTaskCreate(y_task, "y_task", 256, NULL, 1, NULL);
-    xTaskCreate(y_task, "x_task", 256, NULL, 1, NULL);
+    xTaskCreate(y_task, "y_task", 256, NULL, 1, NULL);
     xTaskCreate(uart_task, "uart_task", 4096, NULL, 1, NULL);
-    //xTaskCreate(mpu6050_task, "mpu6050_Task 1", 8192, NULL, 1, NULL);
+    xTaskCreate(mpu6050_task, "mpu6050_Task 1", 8192, NULL, 1, NULL);
 
     vTaskStartScheduler();
 
-    while (true)
-        ;
+
+    while(true)
+
+    ;
+
 }
