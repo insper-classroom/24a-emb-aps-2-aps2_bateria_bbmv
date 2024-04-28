@@ -5,11 +5,12 @@ Por: Beatriz Borges e Maria Vitória Sartori
 Link do Jogo
 -----
 https://mkpc.malahieude.net/ 
+
 O controle só funciona rodando no sistema operacional Linux
 
 Vídeo Demonstração
 -----
-link do vídeo ou o próprio vídeo
+![Video](./imgs/CE16AA9C-A2DC-40C5-8C75-BBF5E825511D.mov)
 
 Como Usar o Controle *"BiboBowser & BeckouKoopaKlaw HotWiu"*
 -----
